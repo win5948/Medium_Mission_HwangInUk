@@ -2,6 +2,8 @@ package com.ll.medium.domain.member.member.controller;
 
 import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.domain.member.member.service.MemberService;
+import com.ll.medium.global.rq.Rq.Rq;
+import com.ll.medium.global.rsData.RsData.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final Rq rq;
 
     @GetMapping("/join")
     public String showJoin() {
@@ -33,12 +36,19 @@ public class MemberController {
     }
     @PostMapping("/join")
     public String join(@Valid JoinForm joinForm) {
-        Member member = memberService.join(joinForm.getUsername(), joinForm.getPassword());
+        RsData<Member> joinRs = memberService.join(joinForm.getUsername(), joinForm.getPassword());
 
-        long id= member.getId();
+        if (joinRs.isFail()) {
+            return rq.hisoryBack(joinRs.getMsg());
+        }
 
-        return "redirect:/?msg=No %d member joine.".formatted(id);
+        return rq.redirect(
+                "/",
+                joinRs.getMsg()
+        );
     }
+
+
 
     @GetMapping("/login")
     public String showlogin() {

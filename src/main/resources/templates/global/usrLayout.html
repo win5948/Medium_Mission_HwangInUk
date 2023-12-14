@@ -25,6 +25,14 @@
 <th:block layout:fragment="content"></th:block>
 
 <script>
+    // history.back 에 의해서 돌아온 경우에 실행됨
+    $(window).bind("pageshow", function (event) {
+        if (sessionStorage.getItem("historyBackFailMsg")) {
+            toastWarning(sessionStorage.getItem("historyBackFailMsg"));
+            sessionStorage.removeItem("historyBackFailMsg");
+        }
+    });
+
     if (urlParams.msg) {
         alert(urlParams.msg);
     }
