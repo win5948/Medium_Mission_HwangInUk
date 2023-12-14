@@ -30,7 +30,10 @@ public class MemberService {
 
        }
 
-        Member member = new Member(username, passwordEncoder.encode(password));
+        Member member = Member.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .build();
         memberRepository.save(member);
 
         return RsData.of("200", "%s님 환영합니다. 회원가입이 완료되었습니다".formatted(member.getUsername()), member);
